@@ -1,8 +1,8 @@
 {
   "name": "iffifan/winnie-client",
+  "type": "library",
   "description": "A Laravel client for Winnie API",
-  "minimum-stability": "stable",
-  "license": "proprietary",
+  "license": "MIT",
   "authors": [
     {
       "name": "Irfan Amir",
