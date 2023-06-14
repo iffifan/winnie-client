@@ -4,6 +4,7 @@ namespace Iffifan\WinnieClient;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Client\Factory;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 
 class WinnieClient
@@ -11,7 +12,7 @@ class WinnieClient
 
     protected Application $app;
     protected Factory $httpClient;
-    protected string $token;
+    protected ?string $token = null;
 
     /**
      * @param   \Illuminate\Http\Client\Factory  $httpClient
@@ -28,15 +29,16 @@ class WinnieClient
         return $this->httpClient;
     }
 
-    public function makeRequest(): Factory
+    public function makeRequest(): PendingRequest
     {
-        $request =  $this->getHttpClient()
-            ->baseUrl($this->getHost())
-            ->acceptJson()
-            ->asJson();
+        $request = $this->getHttpClient()
+                        ->baseUrl($this->getHost())
+                        ->acceptJson()
+                        ->asJson();
         if ($this->token) {
             $request = $request->withToken($this->token);
         }
+
         return $request;
     }
 
@@ -97,4 +99,5 @@ class WinnieClient
     {
         return $this->getHost().$path;
     }
+
 }

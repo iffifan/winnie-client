@@ -45,6 +45,7 @@ class OAuthService
             }
             throw new Exception('Access Token Request Failed!');
         }
+
         return $response->json();
     }
 
@@ -57,6 +58,7 @@ class OAuthService
         if ($response->status() !== 200) {
             throw new HttpClientException();
         }
+
         return $response->json('data');
     }
 
@@ -67,7 +69,7 @@ class OAuthService
     public function makeAuthorizationURL(): string
     {
         $url = $this->winnieClient->fromBaseURL(self::AUTH_PATH);
-        return '?'.http_build_query($this->getCodeFields(), '', '&', $this->encodingType);
+        return $url.'?'.http_build_query($this->getCodeFields(), '', '&', $this->encodingType);
     }
 
     public function makeTokenURL(): string
