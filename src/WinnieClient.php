@@ -31,6 +31,7 @@ class WinnieClient
     public function makeRequest(): Factory
     {
         $request =  $this->getHttpClient()
+            ->baseUrl($this->getHost())
             ->acceptJson()
             ->asJson();
         if ($this->token) {
@@ -46,39 +47,29 @@ class WinnieClient
         return $this;
     }
 
-    public function post(string $url, $data = []): Response
+    public function post(string $path, $data = []): Response
     {
-        $url = $this->fromBaseURL($url);
-
-        return $this->makeRequest()->asForm()->post($url, $data);
+        return $this->makeRequest()->asForm()->post($path, $data);
     }
 
-    public function get(string $url, $query = []): Response
+    public function get(string $path, $query = []): Response
     {
-        $url = $this->fromBaseURL($url);
-
-        return $this->makeRequest()->get($url, $query);
+        return $this->makeRequest()->get($path, $query);
     }
 
-    public function patch(string $url, $data = []): Response
+    public function patch(string $path, $data = []): Response
     {
-        $url = $this->fromBaseURL($url);
-
-        return $this->makeRequest()->get($url, $data);
+        return $this->makeRequest()->get($path, $data);
     }
 
-    public function put(string $url, $data = []): Response
+    public function put(string $path, $data = []): Response
     {
-        $url = $this->fromBaseURL($url);
-
-        return $this->makeRequest()->get($url, $data);
+        return $this->makeRequest()->get($path, $data);
     }
 
-    public function delete(string $url, $data = []): Response
+    public function delete(string $path, $data = []): Response
     {
-        $url = $this->fromBaseURL($url);
-
-        return $this->makeRequest()->get($url, $data);
+        return $this->makeRequest()->get($path, $data);
     }
 
 
@@ -102,8 +93,8 @@ class WinnieClient
         return $this->app['config']->get('winnie-client.host');
     }
 
-    public function fromBaseURL(string $url): string
+    public function fromBaseURL(string $path): string
     {
-        return $this->getHost().$url;
+        return $this->getHost().$path;
     }
 }
