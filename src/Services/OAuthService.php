@@ -45,7 +45,6 @@ class OAuthService
             }
             throw new Exception('Access Token Request Failed!');
         }
-
         return $response->json();
     }
 
@@ -58,7 +57,6 @@ class OAuthService
         if ($response->status() !== 200) {
             throw new HttpClientException();
         }
-
         return $response->json('data');
     }
 

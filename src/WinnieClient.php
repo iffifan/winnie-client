@@ -31,14 +31,13 @@ class WinnieClient
 
     public function makeRequest(): PendingRequest
     {
-        $request = $this->getHttpClient()
-                        ->baseUrl($this->getHost())
-                        ->acceptJson()
-                        ->asJson();
+        $request =  $this->getHttpClient()
+            ->baseUrl($this->getHost())
+            ->acceptJson()
+            ->asJson();
         if ($this->token) {
             $request = $request->withToken($this->token);
         }
-
         return $request;
     }
 
@@ -100,4 +99,8 @@ class WinnieClient
         return $this->getHost().$path;
     }
 
+    public function getUser()
+    {
+        return $this->get('/api/auth/me')->json('data');
+    }
 }
