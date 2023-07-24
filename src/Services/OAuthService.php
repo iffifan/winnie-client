@@ -5,11 +5,8 @@ namespace Iffifan\WinnieClient\Services;
 use Iffifan\WinnieClient\Exceptions\OAuthException;
 use Exception;
 use Iffifan\WinnieClient\WinnieClient;
-use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\HttpClientException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use InvalidArgumentException;
 use Throwable;
 
 class OAuthService
@@ -46,6 +43,15 @@ class OAuthService
             throw new Exception('Access Token Request Failed!');
         }
         return $response->json();
+    }
+
+    public function getClientCredentialsToken()
+    {
+        $response = $this->winnieClient->post($this->makeTokenURL(), $this->getClientCredentialsGrantFields());
+        if ($response->failed()) {
+            throw new Exception('Client Credentials Grant Request Failed!');
+        }
+        return $response->json()['access_token'];
     }
 
     /**
@@ -85,7 +91,7 @@ class OAuthService
         ];
     }
 
-    private function getTokenFields(string $authCode)
+    private function getTokenFields(string $authCode): array
     {
         return [
             'grant_type'    => 'authorization_code',
@@ -93,6 +99,16 @@ class OAuthService
             'client_secret' => $this->winnieClient->getClientSecret(),
             'redirect_uri'  => $this->winnieClient->getClientRedirectURL(),
             'code'          => $authCode,
+        ];
+    }
+
+    private function getClientCredentialsGrantFields(): array
+    {
+        return [
+            'grant_type'    => 'client_credentials',
+            'client_id'     => $this->winnieClient->getClientID(),
+            'client_secret' => $this->winnieClient->getClientSecret(),
+            'scope'         =>  '*'
         ];
     }
 
