@@ -31,7 +31,7 @@ class OAuthService
      * @throws Throwable
      * @throws OAuthException
      */
-    public function getAccessToken(Request $request)
+    public function getAccessToken(Request $request): array
     {
         $response = $this->winnieClient->post($this->makeTokenURL(), $this->getTokenFields($request->get('code')));
         if ($response->json('error')) {
@@ -45,7 +45,7 @@ class OAuthService
         return $response->json();
     }
 
-    public function getClientCredentialsToken()
+    public function getClientCredentialsToken(): string
     {
         $response = $this->winnieClient->post($this->makeTokenURL(), $this->getClientCredentialsGrantFields());
         if ($response->failed()) {
@@ -57,13 +57,26 @@ class OAuthService
     /**
      * @throws \Illuminate\Http\Client\HttpClientException
      */
-    public function getUserFromAccessToken(string $accessToken)
+    public function getUserFromAccessToken(string $accessToken): array
     {
         $response = $this->winnieClient->withToken($accessToken)->get('/api/auth/me');
         if ($response->status() !== 200) {
             throw new HttpClientException();
         }
         return $response->json('data');
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function refreshAccessToken(string $refresh_token): array
+    {
+        $response = $this->winnieClient->post($this->makeTokenURL(), $this->getRefreshTokenFields($refresh_token));
+        if ($response->failed()) {
+            throw new Exception('Refresh Token Request Failed!');
+        }
+
+        return $response->json();
     }
 
     /**
@@ -109,6 +122,17 @@ class OAuthService
             'client_id'     => $this->winnieClient->getClientID(),
             'client_secret' => $this->winnieClient->getClientSecret(),
             'scope'         =>  '*'
+        ];
+    }
+
+    private function getRefreshTokenFields(string $refresh_token): array
+    {
+        return [
+            'grant_type'    => 'refresh_token',
+            'client_id'     => $this->winnieClient->getClientID(),
+            'client_secret' => $this->winnieClient->getClientSecret(),
+            'refresh_token' => $refresh_token,
+            'scope'         =>  '',
         ];
     }
 
