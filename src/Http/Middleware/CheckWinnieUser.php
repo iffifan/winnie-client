@@ -38,7 +38,7 @@ class CheckWinnieUser
         }
 
         if ($user instanceof User) {
-            if ( ! $user->hasRole($role)) {
+            if (!$user->hasRole($role)) {
                 $this->throwException($request);
             }
         } else {
