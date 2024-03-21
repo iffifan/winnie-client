@@ -1,0 +1,63 @@
+{
+    "name": "iffifan/winnie-client",
+    "type": "library",
+    "description": "A Laravel client for Winnie API",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Irfan Amir",
+            "email": "contact@webdonesol.com.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^10",
+        "illuminate/http": "^10",
+        "illuminate/auth": "^10.43"
+    },
+    "autoload": {
+        "psr-4": {
+            "Iffifan\\WinnieClient\\": "src/",
+            "Iffifan\\WinnieClient\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Iffifan\\WinnieClient\\ServiceProvider"
+            ],
+            "aliases": {
+                "WinnieClient": "Iffifan\\WinnieClient\\Facades\\WinnieClient"
+            }
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve"
+        ],
+        "lint": [
+            "@php vendor/bin/phpstan analyse"
+        ]
+    }
+}
