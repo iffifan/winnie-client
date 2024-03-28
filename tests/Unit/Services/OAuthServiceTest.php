@@ -150,7 +150,7 @@ class OAuthServiceTest extends TestCase
         $this->setUpWinnieClient($clientExpectation);
         $service = $this->app->make(OAuthService::class);
         $url = $service->makeAuthorizationURL();
-        $this->assertEquals('https://foo.com/oauth/authorize?client_id=test&redirect_uri=test&response_type=code&scope=', $url);
+        $this->assertEquals('https://foo.com/oauth/authorize?client_id=test&redirect_uri=test&response_type=code&scope=&prompt=login', $url);
     }
 
     public function testGetAccessToken()
