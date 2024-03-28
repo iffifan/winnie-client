@@ -42,6 +42,24 @@ class OAuthService
             }
             throw new Exception('Access Token Request Failed!');
         }
+
+        return $response->json();
+    }
+
+    /**
+     * @param  string  $token
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function revokeAccessToken(string $token): array
+    {
+        $response = $this->winnieClient->withToken($token)
+                                       ->post($this->makeLogoutURL());
+        if ($response->failed()) {
+            throw new Exception('Token Revocation Failed!'.$response->body());
+        }
+
         return $response->json();
     }
 
@@ -51,6 +69,7 @@ class OAuthService
         if ($response->failed()) {
             throw new Exception('Client Credentials Grant Request Failed!');
         }
+
         return $response->json()['access_token'];
     }
 
@@ -63,6 +82,7 @@ class OAuthService
         if ($response->status() !== 200) {
             throw new HttpClientException();
         }
+
         return $response->json('data');
     }
 
@@ -85,13 +105,20 @@ class OAuthService
      */
     public function makeAuthorizationURL(): string
     {
-        $url = $this->winnieClient->fromBaseURL(self::AUTH_PATH);
-        return $url.'?'.http_build_query($this->getCodeFields(), '', '&', $this->encodingType);
+        $url         = $this->winnieClient->fromBaseURL(self::AUTH_PATH);
+        $queryParams = http_build_query($this->getCodeFields(), '', '&', $this->encodingType);
+
+        return $url.'?'.$queryParams;
     }
 
     public function makeTokenURL(): string
     {
         return self::TOKEN_PATH;
+    }
+
+    public function makeLogoutURL(): string
+    {
+        return $this->winnieClient->fromBaseURL('/api/auth/logout');
     }
 
     private function getCodeFields(): array
@@ -101,6 +128,7 @@ class OAuthService
             'redirect_uri'  => $this->winnieClient->getClientRedirectURL(),
             'response_type' => 'code',
             'scope'         => '',
+            'prompt'        => 'login'
         ];
     }
 
@@ -121,7 +149,7 @@ class OAuthService
             'grant_type'    => 'client_credentials',
             'client_id'     => $this->winnieClient->getClientID(),
             'client_secret' => $this->winnieClient->getClientSecret(),
-            'scope'         =>  '*'
+            'scope'         => '*'
         ];
     }
 
@@ -132,7 +160,7 @@ class OAuthService
             'client_id'     => $this->winnieClient->getClientID(),
             'client_secret' => $this->winnieClient->getClientSecret(),
             'refresh_token' => $refresh_token,
-            'scope'         =>  '',
+            'scope'         => '',
         ];
     }
 
