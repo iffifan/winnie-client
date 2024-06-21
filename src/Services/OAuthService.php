@@ -103,10 +103,10 @@ class OAuthService
      *
      * @return string
      */
-    public function makeAuthorizationURL(): string
+    public function makeAuthorizationURL(string|null $state = null): string
     {
         $url         = $this->winnieClient->fromBaseURL(self::AUTH_PATH);
-        $queryParams = http_build_query($this->getCodeFields(), '', '&', $this->encodingType);
+        $queryParams = http_build_query($this->getCodeFields($state), '', '&', $this->encodingType);
 
         return $url.'?'.$queryParams;
     }
@@ -121,15 +121,20 @@ class OAuthService
         return $this->winnieClient->fromBaseURL('/api/auth/logout');
     }
 
-    private function getCodeFields(): array
+    private function getCodeFields(string|null $state = null): array
     {
-        return [
+        $fields = [
             'client_id'     => $this->winnieClient->getClientID(),
             'redirect_uri'  => $this->winnieClient->getClientRedirectURL(),
             'response_type' => 'code',
             'scope'         => '',
             'prompt'        => 'login'
         ];
+        if ($state) {
+            $fields['state'] = $state;
+        }
+
+        return $fields;
     }
 
     private function getTokenFields(string $authCode): array
