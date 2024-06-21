@@ -130,7 +130,7 @@ class OAuthService
             'scope'         => '',
             'prompt'        => 'login'
         ];
-        if ($state !== null) {
+        if ($state) {
             $fields['state'] = $state;
         }
 
